@@ -1,12 +1,11 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
+from app.db.base_class import Base
 from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.orm import relationship
 
-from app.db.base_class import Base
-
 if TYPE_CHECKING:
-    from .item import Item  # noqa: F401
+    from app.models.record import Record
 
 
 class User(Base):
@@ -16,4 +15,9 @@ class User(Base):
     hashed_password: str = Column(String, nullable=False)
     is_active: bool = Column(Boolean(), default=True)
     is_superuser: bool = Column(Boolean(), default=False)
-    items: List["Item"] = relationship("Item", back_populates="owner")
+
+    records: list["Record"] = relationship(
+        "Record",
+        back_populates="user",
+        cascade="all, delete",
+    )

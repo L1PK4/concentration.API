@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from .base import BaseSchema
 
 
 # Shared properties
-class UserBase(BaseModel):
+class UserBase(BaseSchema):
     email: str | None = None
     is_active: bool | None = True
     is_superuser: bool = False

@@ -1,11 +1,10 @@
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union, cast
-
-from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import (Any, Dict, Generic, List, Optional, Type, TypeVar, Union,
+                    cast)
 
 from app.db.base_class import Base
+from fastapi.encoders import jsonable_encoder
+from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.expression import select
 
 ModelType = TypeVar("ModelType", bound=Base)
@@ -48,9 +47,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         )
         return result.scalars().all()
 
-    async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
+    async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType, **kwargs) -> ModelType:
         # obj_in_data = jsonable_encoder(obj_in)
         obj_in_data = obj_in.dict()
+        obj_in_data.update(kwargs)
         db_obj = self.model(**obj_in_data)  # type: ignore
         db.add(db_obj)
         await db.commit()
